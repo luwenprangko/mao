@@ -11,29 +11,31 @@
     <main>
         <form id="mainForm" method="post">
             <!-- Personal Info -->
+            <div>Register</div>
             <section id="personalInfo">
-                <input type="text" name="firstName" id="firstName" placeholder="First Name"><br>
-                <input type="text" name="lastName" id="lastName" placeholder="Last Name"><br>
+                <input type="text" name="firstName" id="firstName" placeholder="First Name" required>
+                <input type="text" name="lastName" id="lastName" placeholder="Last Name" required>
 
                 <label for="option">Select Role:</label>
                 <select name="option" id="option">
                     <option value="personal">Personal</option>
                     <option value="relative">w/ Relative</option>
-                </select><br>
+                </select>
 
-                <input type="text" name="relativeName" id="relativeName" placeholder="Relative Name"
-                    style="display: none;">
+                <input type="text" name="relativeName" id="relativeName" placeholder="Relative Name" hidden>
                 <input type="text" name="relationship" id="relationship" placeholder="Relationship (e.g. Brother)"
-                    style="display: none;"><br>
+                    hidden>
 
                 <button type="button" id="nextBtn">Next</button>
             </section>
 
             <!-- Account Info -->
-            <section id="accountInfo" style="display: none;">
-                <input type="email" name="email" id="email" placeholder="Email"><br>
-                <input type="password" name="password" id="password" placeholder="Password"><br>
-                <input type="password" name="confirmPassword" id="confirmPassword" placeholder="Confirm Password"><br>
+            <section id="accountInfo" hidden>
+                <input type="email" name="email" id="email" placeholder="Email" required>
+                <input type="password" name="password" id="password" placeholder="Password" required>
+                <input type="password" name="confirmPassword" id="confirmPassword" placeholder="Confirm Password"
+                    required>
+
                 <button type="button" id="backBtn">Back</button>
                 <button type="submit">Register</button>
             </section>
@@ -48,56 +50,30 @@
         const backBtn = document.getElementById('backBtn');
         const accountInfo = document.getElementById('accountInfo');
         const personalInfo = document.getElementById('personalInfo');
-        const firstName = document.getElementById('firstName');
-        const lastName = document.getElementById('lastName');
 
         option.addEventListener('change', function () {
             const isRelative = this.value === 'relative';
-            relativeName.style.display = isRelative ? 'block' : 'none';
-            relationship.style.display = isRelative ? 'block' : 'none';
+            relativeName.hidden = !isRelative;
+            relationship.hidden = !isRelative;
+            relativeName.required = isRelative;
+            relationship.required = isRelative;
         });
 
         nextBtn.addEventListener('click', function () {
-            let isValid = true;
-            const role = option.value;
-
-            // Reset borders
-            [firstName, lastName, relativeName, relationship].forEach(input => {
-                input.style.border = '';
-            });
-
-            if (!firstName.value.trim()) {
-                firstName.style.border = '1px solid red';
-                isValid = false;
-            }
-
-            if (!lastName.value.trim()) {
-                lastName.style.border = '1px solid red';
-                isValid = false;
-            }
-
-            if (role === 'relative') {
-                if (!relativeName.value.trim()) {
-                    relativeName.style.border = '1px solid red';
-                    isValid = false;
-                }
-                if (!relationship.value.trim()) {
-                    relationship.style.border = '1px solid red';
-                    isValid = false;
+            const inputs = personalInfo.querySelectorAll('input:not([hidden]), select');
+            for (let input of inputs) {
+                if (!input.checkValidity()) {
+                    input.reportValidity();
+                    return;
                 }
             }
-
-            if (isValid) {
-                personalInfo.style.display = 'none';
-                accountInfo.style.display = 'block';
-            } else {
-                alert('Please fill in all required fields.');
-            }
+            personalInfo.hidden = true;
+            accountInfo.hidden = false;
         });
 
         backBtn.addEventListener('click', function () {
-            accountInfo.style.display = 'none';
-            personalInfo.style.display = 'block';
+            accountInfo.hidden = true;
+            personalInfo.hidden = false;
         });
     </script>
 </body>
